@@ -3243,7 +3243,7 @@ SampleHelpers::HiggsSampleDecayMode SampleHelpers::getHiggsSampleDecayMode(TStri
 
   else{
     MELAerr << "SampleHelpers::getHiggsSampleDecayMode: Cannot identify decay mode for " << sname << "." << endl;
-    assert(0);
+    //assert(0);
     return nHiggsSampleDecayModes;
   }
 }

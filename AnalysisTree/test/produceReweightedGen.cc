@@ -205,8 +205,8 @@ void produceReweightedGen(
 
   constexpr float lumi = 1;
 
-  std::vector<TString> const validDataPeriods = SampleHelpers::getValidDataPeriods();
-  size_t const nValidDataPeriods = validDataPeriods.size();
+  //std::vector<TString> const validDataPeriods = SampleHelpers::getValidDataPeriods();
+  //size_t const nValidDataPeriods = validDataPeriods.size();
 
   bool isGG = strSampleSet.Contains("GluGluH") || strSampleSet.Contains("GGH");
   bool isVBF = strSampleSet.Contains("VBF");
@@ -220,9 +220,10 @@ void produceReweightedGen(
   std::vector<TString> sampledirs;
   SampleHelpers::constructSamplesList(strSampleSet, theGlobalSyst, sampledirs);
 
-  if (sampledirs.empty()) return;
-  bool isData = SampleHelpers::checkSampleIsData(sampledirs.front());
-  if (isData) return;
+  //if (sampledirs.empty()) return;
+  //bool isData = SampleHelpers::checkSampleIsData(sampledirs.front());
+  //if (isData) return;
+  bool isData = true;
 
   // Set output directory
   TString coutput_main = "output/ReweightedGenTrees/" + strdate + "/" + period;
@@ -342,11 +343,16 @@ void produceReweightedGen(
   bool allTreesValid = true;
   BaseTree* tree_MH125 = nullptr;
   BaseTree* tree_MHLowestOffshell = nullptr;
+
   std::vector<BaseTree*> sample_trees; sample_trees.reserve(sampledirs.size());
   for (auto const& sname:sampledirs){
-    TString strinput = SampleHelpers::getDatasetFileName(sname);
+    TString strinput = "/eos/user/l/lkang/Active_Research/highmass_SM/samples/PROD_samples_2017_MC_update_09326dd9/ignore/disregard/Signal_gg_hadd";//SampleHelpers::getDatasetFileName(sname);
     MELAout << "Acquiring " << sname << " from input file(s) " << strinput << "..." << endl;
-    BaseTree* sample_tree = new BaseTree(strinput, "cms3ntuple/Events", "", ""); sample_trees.push_back(sample_tree);
+    BaseTree* sample_tree = new BaseTree(strinput, "ZZTree/candTree", "", ""); 
+    MELAout << "test" << endl;
+    sample_trees.push_back(sample_tree);
+    MELAout << "tested" << endl;
+
     if (!sample_tree->isValid()){
       MELAerr << "\t- Tree is invalid. Aborting..." << endl;
       delete sample_tree;

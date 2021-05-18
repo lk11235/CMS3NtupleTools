@@ -19,6 +19,7 @@ namespace SampleHelpers{
 
 void SampleHelpers::configure(TString period, TString stag, HostHelpers::Hosts input_host){
   setDataPeriod(period);
+/*
   TString strInputDir = "/home/users/usarica/work/Width_AC_Run2/Samples";
   if (stag.Contains(":")){
     std::vector<TString> splitstr; char delimiter=':';
@@ -35,13 +36,14 @@ void SampleHelpers::configure(TString period, TString stag, HostHelpers::Hosts i
     }
   }
   if (strInputDir.BeginsWith("/store")) strInputDir = HostHelpers::GetStandardHostPathToStore(strInputDir, input_host);
-
+*/
+  TString strInputDir = "/eos/user/l/lkang/Active_Research/highmass_SM/samples/PROD_samples_2017_MC_update_09326dd9/ignore/disregard/Signal_gg_hadd";
   theSamplesTag=stag;
   setInputDirectory(strInputDir);
 
   runConfigure=true;
 
-  TriggerHelpers::configureHLTmap();
+//  TriggerHelpers::configureHLTmap();
 }
 
 std::string SampleHelpers::getDatasetDirectoryCoreName(std::string sname){ return SampleHelpers::getDatasetCoreName(sname); }

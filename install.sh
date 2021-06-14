@@ -87,7 +87,8 @@ git cms-addpkg RecoJets/JetProducers
 # No CMSSW packages beyond this point #
 #######################################
 
-git clone git@github.com:usarica/CMS3NtupleTools.git CMS3
+#git clone git@github.com:usarica/CMS3NtupleTools.git CMS3
+git clone git@github.com:lk11235/CMS3NtupleTools.git CMS3
 (
   cd CMS3; git checkout ${CMS3Tag}; cd -
   cd $CMSSW_BASE/src/CMS3/NtupleMaker/data/JECs ; . download.sh; cd -
@@ -102,10 +103,12 @@ git clone git@github.com:JHUGen/JHUGenMELA.git
 git clone git@github.com:MELALabs/MelaAnalytics.git
 
 # Common LHE tools
-git clone git@github.com:usarica/CommonLHETools.git
+#git clone git@github.com:usarica/CommonLHETools.git
+git clone git@github.com:lk11235/CommonLHETools.git
 
 # CMSDataTools
-git clone git@github.com:usarica/CMSDataTools.git
+#git clone git@github.com:usarica/CMSDataTools.git
+git clone git@github.com:lk11235/CMSDataTools.git
 
 #########################
 #  DeepAK8 fat jet tagger
@@ -115,21 +118,32 @@ git clone git@github.com:usarica/CMSDataTools.git
 # and thus, the user must either configure ssh keys or manually type their password.
 # the latter ruins the whole "run this install script, get a coffee, use the ntuplemaker" workflow.
 # git clone ssh://git@gitlab.cern.ch:7999/DeepAK8/NNKit.git -b ver_2018-03-08_for94X
-if [[ -d /nfs-7/userdata/NtupleModules/NNKit_ver_2018-03-08_for94X ]]; then
-  cp -r /nfs-7/userdata/NtupleModules/NNKit_ver_2018-03-08_for94X NNKit
-elif [[ $(readlink -f ~)/CMS3/NNKit_ver_2018-03-08_for94X ]]; then
-  cp -r $(readlink -f ~)/CMS3/NNKit_ver_2018-03-08_for94X NNKit
-fi
+git clone ssh://git@gitlab.cern.ch:7999/TreeMaker/NNKit.git -b ver_2018-03-08
+
+#if [[ -d /nfs-7/userdata/NtupleModules/NNKit_ver_2018-03-08_for94X ]]; then
+#  cp -r /nfs-7/userdata/NtupleModules/NNKit_ver_2018-03-08_for94X NNKit
+#elif [[ $(readlink -f ~)/CMS3/NNKit_ver_2018-03-08_for94X ]]; then
+#  cp -r $(readlink -f ~)/CMS3/NNKit_ver_2018-03-08_for94X NNKit
+#fi
+
+# setup mxnet library
+cp NNKit/misc/mxnet_predict.xml $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected
+scram setup mxnet_predict
+rm $CMSSW_BASE/external/$SCRAM_ARCH/lib/libmxnet_predict.so
+cp NNKit/misc/lib/libmxnet_predict.so $CMSSW_BASE/external/$SCRAM_ARCH/lib/libmxnet_predict.so
+
 # setup mxnet library
 # cp /cvmfs/cms.cern.ch/$SCRAM_ARCH/cms/cmssw/CMSSW_10_2_0/config/toolbox/$SCRAM_ARCH/tools/selected/mxnet-predict.xml $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected
-scram setup mxnet-predict
+#scram setup mxnet-predict
 # rm $CMSSW_BASE/external/$SCRAM_ARCH/lib/libmxnet_predict.so
 # cp NNKit/misc/lib/libmxnet_predict.so $CMSSW_BASE/external/$SCRAM_ARCH/lib/libmxnet_predict.so
 # copy json files to test directory (or wherever you are doing cmsRun)
 # cp NNKit/data/ak8/*.{json,params} $CMSSW_BASE/src/CMS3/NtupleMaker/test/
 # #######################
 
-scram b -j
+export LD_PRELOAD=/cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_2_22/external/slc7_amd64_gcc700/lib/libjemalloc.so.2
+#scram b -j
+scram b -j 16
 
 # see comment in patchesToSource.sh
 rm $CMSSW_BASE/lib/$SCRAM_ARCH/.poisonededmplugincache

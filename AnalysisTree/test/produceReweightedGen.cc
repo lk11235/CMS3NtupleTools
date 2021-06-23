@@ -220,6 +220,44 @@ void produceReweightedGen(
   std::vector<TString> sampledirs;
   SampleHelpers::constructSamplesList(strSampleSet, theGlobalSyst, sampledirs);
 
+
+  sampledirs = std::vector<TString>{"/GluGluHToZZTo4L_M200_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"};
+
+/*
+  sampledirs = std::vector<TString>{
+              "/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM",
+              "/GluGluHToZZTo4L_M160_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M170_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M180_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M190_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M200_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M210_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M230_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M250_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M270_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M300_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M350_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M400_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M450_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M500_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M550_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M600_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M700_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M800_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M900_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M1000_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M1500_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M2000_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M2500_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M3000_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"
+            };
+*/
+
+  MELAout << "sampledirs = " << sampledirs << endl;
+
+  MELAout << "sampledirs size = " << sampledirs.size() << endl;
+
+
   //if (sampledirs.empty()) return;
   //bool isData = SampleHelpers::checkSampleIsData(sampledirs.front());
   //if (isData) return;
@@ -295,8 +333,8 @@ void produceReweightedGen(
   MELAout << "Reweighting bin boundaries: " << binning_rewgt.getBinningVector() << endl;
   BulkReweightingBuilder rewgtBuilder(
     binning_rewgt,
-    { "LHECandMass" },
-    { "genHEPMCweight_default" },
+    { "GenHMass" },
+    { "genHEPMCweight" },
     { "xsec" },
     ReweightingFunctions::getSimpleVariableBin,
     ReweightingFunctions::getSimpleWeight,
@@ -344,11 +382,18 @@ void produceReweightedGen(
   BaseTree* tree_MH125 = nullptr;
   BaseTree* tree_MHLowestOffshell = nullptr;
 
+  MELAout << "test1" << endl;
+
   std::vector<BaseTree*> sample_trees; sample_trees.reserve(sampledirs.size());
+  
+  MELAout << "test2" << endl;
+
   for (auto const& sname:sampledirs){
-    TString strinput = "/eos/user/l/lkang/Active_Research/highmass_SM/samples/PROD_samples_2017_MC_update_09326dd9/ignore/disregard/Signal_gg_hadd";//SampleHelpers::getDatasetFileName(sname);
+    TString strinput = "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH200/ZZ4lAnalysis.root";
+    //TString strinput = SampleHelpers::getDatasetFileName(sname);
     MELAout << "Acquiring " << sname << " from input file(s) " << strinput << "..." << endl;
-    BaseTree* sample_tree = new BaseTree(strinput, "ZZTree/candTree", "", ""); 
+    MELAout << "testing" << endl;
+    BaseTree* sample_tree = new BaseTree(strinput, "ZZTree/candTree", "ZZTree/candTree_failed", ""); 
     MELAout << "test" << endl;
     sample_trees.push_back(sample_tree);
     MELAout << "tested" << endl;
@@ -464,8 +509,11 @@ void produceReweightedGen(
     theLooper.addTree(sample_tree, globalWeights);
   }
 
+  MELAout << "\t- Tree was added to the Looper! Yayyy..." << endl;
+
   std::vector< std::pair<BaseTree*, BaseTree*> > tree_normTree_pairs; tree_normTree_pairs.reserve(sample_trees.size()-1);
   for (unsigned int itree=0; itree<sample_trees.size(); itree++){
+    MELAout << "\t- We are now in the loop at tree index " << itree << endl;
     BaseTree* const& sample_tree = sample_trees.at(itree);
     if (sample_tree==tree_MH125 || sample_tree==tree_MHLowestOffshell) continue;
     float const sampleMH = SampleHelpers::findPoleMass(sample_tree->sampleIdentifier);
@@ -473,12 +521,19 @@ void produceReweightedGen(
       tree_normTree_pairs.emplace_back(sample_trees.at(itree), sample_trees.at(itree-1));
       MELAout << "Normalizing mass " << sampleMH << " to mass " << SampleHelpers::findPoleMass(sample_trees.at(itree-1)->sampleIdentifier) << endl;
     }
+    MELAout << "\t- We finished the body of the loop for tree index " << itree << endl;
   }
+
+  MELAout << "\t- Now we can set thigns up with the reweighting builder..." << endl;
 
   rewgtBuilder.setup(0, &tree_normTree_pairs, thr_frac_Neff);
 
+  MELAout << "\t- Now we can loop over all events..." << endl;
+
   // Loop over all events
   theLooper.loop(true);
+
+  MELAout << "\t- And delete unnecessary things..." << endl;
 
   // No need for the inputs
   for (auto& ss:sample_trees) delete ss;
@@ -490,6 +545,8 @@ void produceReweightedGen(
   foutput->Close();
 
   curdir->cd();
+
+  MELAout << "\t- Final step of adding to Condor..." << endl;
 
   SampleHelpers::addToCondorTransferList(stroutput);
 }

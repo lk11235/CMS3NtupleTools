@@ -37,13 +37,13 @@ void SampleHelpers::configure(TString period, TString stag, HostHelpers::Hosts i
   }
   if (strInputDir.BeginsWith("/store")) strInputDir = HostHelpers::GetStandardHostPathToStore(strInputDir, input_host);
 */
-  TString strInputDir = "/eos/user/l/lkang/Active_Research/highmass_SM/samples/PROD_samples_2017_MC_update_09326dd9/ignore/disregard/Signal_gg_hadd";
+  TString strInputDir = "/eos/user/l/lkang/Active_Research/highmass_SM/samples/PROD_samples_2017_MC_update_09326dd9/ignore/CMS3test";
   theSamplesTag=stag;
   setInputDirectory(strInputDir);
 
   runConfigure=true;
 
-//  TriggerHelpers::configureHLTmap();
+  TriggerHelpers::configureHLTmap();
 }
 
 std::string SampleHelpers::getDatasetDirectoryCoreName(std::string sname){ return SampleHelpers::getDatasetCoreName(sname); }

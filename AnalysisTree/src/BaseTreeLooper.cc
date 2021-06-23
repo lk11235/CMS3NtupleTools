@@ -308,6 +308,8 @@ void BaseTreeLooper::incrementSelection(TString const& strsel, unsigned int inc)
 }
 
 void BaseTreeLooper::loop(bool keepProducts){
+  MELAout << "Starting the looper..." << endl;
+  
   if (!looperFunction){
     MELAerr << "BaseTreeLooper::loop: The looper function is not registered. Please register it using BadeTreeLooper::setLooperFunction." << endl;
     return;
@@ -424,7 +426,7 @@ void BaseTreeLooper::loop(bool keepProducts){
     }
 
     const int nevents = tree->getNEvents();
-    MELAout << "BaseTreeLooper::loop: Looping over " << nevents << " events in " << tree->sampleIdentifier << "..." << endl;
+    MELAout << "BaseTreeLooper::loop: Looping allllllllllllllllllllllllllllllllllllllll over " << nevents << " events in " << tree->sampleIdentifier << "..." << endl;
     for (int ev=0; ev<nevents; ev++){
       if (
         SampleHelpers::doSignalInterrupt==1

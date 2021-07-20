@@ -15,7 +15,7 @@
   BRANCH_COMMAND(float, lheLeptonicDecay_pt) \
   BRANCH_COMMAND(float, lheLeptonicDecay_mass) \
   BRANCH_COMMAND(float, genLeptonicDecay_pt) \
-  BRANCH_COMMAND(float, genLeptonicDecay_mass)
+  BRANCH_COMMAND(float, genLeptonicDecay_mass) 
 #define BRANCH_VECTOR_COMMANDS \
   BRANCH_COMMAND(cms3_id_t, lhemothers_id) \
   BRANCH_COMMAND(cms3_id_t, genparticles_id) \
@@ -27,7 +27,7 @@
   BRANCH_COMMAND(float, genak4jets_pt) \
   BRANCH_COMMAND(float, genak4jets_eta) \
   BRANCH_COMMAND(float, genak4jets_phi) \
-  BRANCH_COMMAND(float, genak4jets_mass)
+  BRANCH_COMMAND(float, genak4jets_mass) 
 #define BRANCH_COMMANDS \
   BRANCH_SCALAR_COMMANDS \
   BRANCH_VECTOR_COMMANDS
@@ -67,10 +67,10 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
 
   auto* rewgtBuilder = theLooper->getRegisteredRewgtBuilders().find("MERewgt")->second;
 
-
   /************************/
   /* EVENT INTERPRETATION */
   /************************/
+
 #define BRANCH_COMMAND(TYPE, NAME) TYPE NAME = 0;
   BRANCH_SCALAR_COMMANDS;
 #undef BRANCH_COMMAND
@@ -121,7 +121,7 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   lheHiggs_pt = p4_lheHiggs.Pt();
   lheLeptonicDecay_pt = p4_lheLeptonicDecay.Pt();
   lheLeptonicDecay_mass = p4_lheLeptonicDecay.M();
-
+/*
   ParticleObject::LorentzVector_t p4_genLeptonicDecay;
   auto const& genparticles = genInfoHandler->getGenParticles();
   for (auto const& part:genparticles){
@@ -149,6 +149,8 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   sample_wgt = rewgtBuilder->getOverallReweightingNormalization(currentTree);
   invalidReweightingWgts = !rewgtBuilder->checkWeightsBelowThreshold(currentTree);
 
+*/
+
   // Record LHE MEs and K factors
   for (auto const& it:genInfo->extras.LHE_ME_weights) commonEntry.setNamedVal(it.first, it.second);
   for (auto const& it:genInfo->extras.Kfactors) commonEntry.setNamedVal(it.first, it.second);
@@ -157,7 +159,7 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   /* RECORD THE OUTPUT */
   /*********************/
 #define BRANCH_COMMAND(TYPE, NAME) commonEntry.setNamedVal(#NAME, NAME);
-  BRANCH_COMMANDS;
+//  BRANCH_COMMANDS;
 #undef BRANCH_COMMAND
 
   return true;
@@ -335,7 +337,7 @@ void produceReweightedGen(
     binning_rewgt,
     { "GenHMass" },
     { "genHEPMCweight" },
-    { "xsec" },
+    { "genxsec" },
     ReweightingFunctions::getSimpleVariableBin,
     ReweightingFunctions::getSimpleWeight,
     ReweightingFunctions::getSimpleWeight
@@ -489,8 +491,10 @@ void produceReweightedGen(
     {
       genInfoHandler.setAcquireLHEMEWeights(true);
       genInfoHandler.setAcquireLHEParticles(true);
-      genInfoHandler.setAcquireGenParticles(true);
-      genInfoHandler.setAcquireGenAK4Jets(true);
+      //genInfoHandler.setAcquireGenParticles(true);
+      genInfoHandler.setAcquireGenParticles(false);
+      //genInfoHandler.setAcquireGenAK4Jets(true);
+      genInfoHandler.setAcquireGenAK4Jets(false);
       // Specify this flag to omit V->qq->jj
       genInfoHandler.setDoGenJetsVDecayCleaning(false);
       // Do not clean jets, allow user to do this on their own
@@ -550,6 +554,7 @@ void produceReweightedGen(
 
   SampleHelpers::addToCondorTransferList(stroutput);
 }
+
 
 void makePlots(TString strSampleSet, TString period, TString strdate){
   SystematicsHelpers::SystematicVariationTypes const theGlobalSyst = SystematicsHelpers::sNominal;
@@ -817,11 +822,10 @@ void makePlots(TString strSampleSet, TString period, TString strdate){
     unsigned int icat = std::min(genak4jets_selected.size(), nCats-1);
 
     hlist_genmass.at(icat).Fill(
-      //*LHECandMass,
       sump4_genleptons_selected.M(),
       wgt
     );
-    if (/*(*LHECandMass)*/sump4_genleptons_selected.M()>200.){
+    if (sump4_genleptons_selected.M()>200.){
       for (auto const& jet:genak4jets) hlist_genak4jetpt.at(icat).Fill(jet.pt(), wgt);
       for (auto const& jet:genak4jets_selected) hlist_genak4jetselectedpt.at(icat).Fill(jet->pt(), wgt);
       if (genak4jets_selected.size()>=1){

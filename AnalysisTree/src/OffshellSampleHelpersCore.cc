@@ -43,7 +43,7 @@ void SampleHelpers::configure(TString period, TString stag, HostHelpers::Hosts i
 
   runConfigure=true;
 
-  TriggerHelpers::configureHLTmap();
+  //TriggerHelpers::configureHLTmap();
 }
 
 std::string SampleHelpers::getDatasetDirectoryCoreName(std::string sname){ return SampleHelpers::getDatasetCoreName(sname); }

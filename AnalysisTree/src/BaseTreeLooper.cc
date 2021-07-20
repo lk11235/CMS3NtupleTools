@@ -434,8 +434,11 @@ void BaseTreeLooper::loop(bool keepProducts){
         (maxNEvents>=0 && (int) ev_rec==maxNEvents)
         ) break;
 
+      MELAout << "Reached doAccumulate..." << endl;
+
       bool doAccumulate = true;
       if (this->isData_currentTree){
+        MELAout << "isData_currentTree is True..." << endl;
         if (eventIndex_begin>0 || eventIndex_end>0) doAccumulate = (
           tree->updateBranch(ev, "RunNumber", false)
           &&
@@ -444,14 +447,18 @@ void BaseTreeLooper::loop(bool keepProducts){
           (eventIndex_end<0 || static_cast<int>(*RunNumber)<=eventIndex_end)
           );
       }
-      else doAccumulate = (
+      else{
+        doAccumulate = (
         (eventIndex_begin<0 || (int) ev_traversed>=eventIndex_begin)
         &&
         (eventIndex_end<0 || (int) ev_traversed<eventIndex_end)
         );
-
+        MELAout << "Not data..." << endl;
+      }
       if (doAccumulate){
+        MELAout << "if (doAccumulate)..." << endl;
         if (tree->getEvent(ev)){
+          MELAout << "if (tree->getEvent(ev))..." << endl;
           SimpleEntry product;
           if (sampleIdOpt==kStoreByRunAndEventNumber){
 #define RUNLUMIEVENT_VARIABLE(TYPE, NAME, DEFVAL) product.setNamedVal<TYPE>(#NAME, *NAME);
@@ -460,17 +467,24 @@ void BaseTreeLooper::loop(bool keepProducts){
           }
           else if (sampleIdOpt==kStoreByMH) product.setNamedVal("SampleMHVal", MHval);
           if (tree->isValidEvent()){
+            MELAout << "if (tree->isValidEvent())..." << endl;
             if (this->looperFunction(this, it_globalWgt->second, product)){
+              MELAout << "Trying addProduct(product, &ev_rec)..." << endl;
               if (keepProducts) this->addProduct(product, &ev_rec);
+              MELAout << "Products added..." << endl;
             }
           }
         }
+        MELAout << "ev_acc++..." << endl;
         ev_acc++;
       }
-
+      MELAout << "Will try progress bar for ev loop over nevents..." << endl;
       HelperFunctions::progressbar(ev, nevents);
+      MELAout << "ev_traversed++..." << endl;
       ev_traversed++;
     }
+
+    MELAout << "This is right after our loop of ev over all nevents..." << endl;
 
     if (!selection_string_count_pairs.empty()){
       MELAout << "BaseTreeLooper::loop: Number of events passing each selection type:" << endl;

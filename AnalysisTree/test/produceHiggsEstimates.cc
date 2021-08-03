@@ -301,7 +301,7 @@ void produceReweightingRecords(
   BulkReweightingBuilder rewgtBuilder(
     binning_rewgt,
     { "LHECandMass" },
-    { "genHEPMCweight_default" },
+    { "genHEPMCweight" },
     { "xsec" },
     ReweightingFunctions::getSimpleVariableBin,
     ReweightingFunctions::getSimpleWeight,
@@ -1553,9 +1553,9 @@ void getTrees_ZZTo2L2Nu(
 
   BulkReweightingBuilder rewgtBuilder(
     ExtendedBinning(),
-    { "LHECandMass" },
-    { "genHEPMCweight_default" },
-    { "xsec" },
+    { "GenHMass" },
+    { "genHEPMCweight" },
+    { "genxsec" },
     ReweightingFunctions::getSimpleVariableBin,
     ReweightingFunctions::getSimpleWeight,
     ReweightingFunctions::getSimpleWeight

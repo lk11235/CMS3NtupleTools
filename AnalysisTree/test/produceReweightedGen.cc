@@ -6,6 +6,7 @@
 
 
 // Recorded variables
+/*
 #define BRANCH_SCALAR_COMMANDS \
   BRANCH_COMMAND(float, event_wgt) \
   BRANCH_COMMAND(float, event_wgt_adjustment_NNPDF30) \
@@ -31,6 +32,35 @@
 #define BRANCH_COMMANDS \
   BRANCH_SCALAR_COMMANDS \
   BRANCH_VECTOR_COMMANDS
+*/
+
+#define BRANCH_SCALAR_COMMANDS \
+  BRANCH_COMMAND(float, event_wgt) \
+  BRANCH_COMMAND(float, event_wgt_adjustment_NNPDF30) /*\
+  BRANCH_COMMAND(bool, invalidReweightingWgts) \
+  BRANCH_COMMAND(float, sample_wgt) \
+  BRANCH_COMMAND(float, lheHiggs_pt) \
+  BRANCH_COMMAND(float, lheLeptonicDecay_pt) \
+  BRANCH_COMMAND(float, lheLeptonicDecay_mass) \
+  BRANCH_COMMAND(float, genLeptonicDecay_pt) \
+  BRANCH_COMMAND(float, genLeptonicDecay_mass) */
+#define BRANCH_VECTOR_COMMANDS /*\
+  BRANCH_COMMAND(cms3_id_t, lhemothers_id) \
+  BRANCH_COMMAND(cms3_id_t, genparticles_id) \
+  BRANCH_COMMAND(float, lhemothers_pz) \
+  BRANCH_COMMAND(float, genparticles_pt) \
+  BRANCH_COMMAND(float, genparticles_eta) \
+  BRANCH_COMMAND(float, genparticles_phi) \
+  BRANCH_COMMAND(float, genparticles_mass) \
+  BRANCH_COMMAND(float, genak4jets_pt) \
+  BRANCH_COMMAND(float, genak4jets_eta) \
+  BRANCH_COMMAND(float, genak4jets_phi) \
+  BRANCH_COMMAND(float, genak4jets_mass) */
+#define BRANCH_COMMANDS \
+  BRANCH_SCALAR_COMMANDS \
+  BRANCH_VECTOR_COMMANDS 
+
+
 
 
 namespace LooperFunctionHelpers{
@@ -87,6 +117,8 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   }
   double const& extWgt_central = it_extWgt->second;
 
+  //MELAout << "extWgt_central =" << extWgt_central << endl;
+
   event_wgt = extWgt_central;
   // Set NNPDF 3.0 adjustment to 1
   event_wgt_adjustment_NNPDF30 = 1;
@@ -95,10 +127,14 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   auto const& genInfo = genInfoHandler->getGenInfo();
   double genwgt_NNPDF30 = genInfo->getGenWeight(false);
   double genwgt_default = genInfo->getGenWeight(true);
+  
+  //MELAout << "genwgt_NNPDF30 =" << genwgt_NNPDF30 << endl;
+  //MELAout << "genwgt_default =" << genwgt_default << endl;
+
   event_wgt_adjustment_NNPDF30 = (genwgt_default!=0. ? genwgt_NNPDF30 / genwgt_default : 0.);
   event_wgt *= genwgt_default;
   if (event_wgt==0.f) return false;
-
+/*
   bool hasTaus = false;
   unsigned int n_leps_nus=0;
   ParticleObject::LorentzVector_t p4_lheHiggs;
@@ -121,7 +157,7 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   lheHiggs_pt = p4_lheHiggs.Pt();
   lheLeptonicDecay_pt = p4_lheLeptonicDecay.Pt();
   lheLeptonicDecay_mass = p4_lheLeptonicDecay.M();
-/*
+
   ParticleObject::LorentzVector_t p4_genLeptonicDecay;
   auto const& genparticles = genInfoHandler->getGenParticles();
   for (auto const& part:genparticles){
@@ -159,7 +195,7 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   /* RECORD THE OUTPUT */
   /*********************/
 #define BRANCH_COMMAND(TYPE, NAME) commonEntry.setNamedVal(#NAME, NAME);
-//  BRANCH_COMMANDS;
+  BRANCH_COMMANDS;
 #undef BRANCH_COMMAND
 
   return true;
@@ -255,6 +291,8 @@ void produceReweightedGen(
             };
 */
 
+  MELAout << "strSampleSet = " << strSampleSet << endl;
+
   MELAout << "sampledirs = " << sampledirs << endl;
 
   MELAout << "sampledirs size = " << sampledirs.size() << endl;
@@ -263,7 +301,7 @@ void produceReweightedGen(
   //if (sampledirs.empty()) return;
   //bool isData = SampleHelpers::checkSampleIsData(sampledirs.front());
   //if (isData) return;
-  bool isData = true;
+  bool isData = false; //true;
 
   // Set output directory
   TString coutput_main = "output/ReweightedGenTrees/" + strdate + "/" + period;
@@ -315,7 +353,9 @@ void produceReweightedGen(
     std::vector<double> sample_masses;
     for (auto const& sname:sampledirs){
       TString sid = SampleHelpers::getSampleIdentifier(sname);
+      MELAout << "getSampleIdentifier returns:" << sid << endl;
       sample_masses.push_back(SampleHelpers::findPoleMass(sid));
+      MELAout << "findPoleMass(sid) returns:" << SampleHelpers::findPoleMass(sid) << endl;
     }
     if (sample_masses.size()>1){
       for (unsigned int im=0; im<sample_masses.size()-1; im++){
@@ -332,6 +372,9 @@ void produceReweightedGen(
       }
     }
   }
+
+
+
   MELAout << "Reweighting bin boundaries: " << binning_rewgt.getBinningVector() << endl;
   BulkReweightingBuilder rewgtBuilder(
     binning_rewgt,
@@ -426,7 +469,7 @@ void produceReweightedGen(
       // Get cross section
       sample_tree->bookBranch<float>("xsec", 0.f);
       sample_tree->getSelectedEvent(0);
-      sample_tree->getVal("xsec", xsec);
+      sample_tree->getVal("genxsec", xsec);
       xsec *= 1000.;
 
       // Book branches
@@ -464,7 +507,10 @@ void produceReweightedGen(
           }
 
           double genwgt = genInfo->getGenWeight(true);
+          //MELAout << "genwgt =" << genwgt << endl;
           double genwgt_defaultMemberZero = genInfo->extras.LHEweight_defaultMemberZero;
+          //MELAout << "genwgt_defaultMemberZero =" << genwgt_defaultMemberZero << endl;
+
           if (genwgt==0.){
             n_zero_genwgts++;
             continue;
@@ -476,8 +522,13 @@ void produceReweightedGen(
         if (nEntries>0) frac_zero_genwgts = double(n_zero_genwgts)/double(nEntries);
         sum_wgts_raw_noveto = sum_wgts_raw_withveto / (1. - frac_zero_genwgts);
       }
+      MELAout << "sum_wgts_raw_withveto =" << sum_wgts_raw_withveto << endl;
+      MELAout << "sum_wgts_raw_withveto_defaultMemberZero =" << sum_wgts_raw_withveto_defaultMemberZero << endl;
+      MELAout << "sum_wgts_raw_noveto =" << sum_wgts_raw_noveto << endl;
+
       xsec_scale = sum_wgts_raw_withveto / sum_wgts_raw_noveto;
       if (sampleMH>0.f) BR_scale = SampleHelpers::calculateAdjustedHiggsBREff(sname, sum_wgts_raw_withveto_defaultMemberZero, sum_wgts_raw_withveto, hasTaus);
+      MELAout << "BR_scale =" << BR_scale << endl;
     }
     std::unordered_map<SystematicsHelpers::SystematicVariationTypes, double> globalWeights;
     double globalWeight = xsec * xsec_scale * BR_scale / sum_wgts_raw_withveto; globalWeights[theGlobalSyst] = globalWeight;
@@ -495,10 +546,12 @@ void produceReweightedGen(
       genInfoHandler.setAcquireGenParticles(false);
       //genInfoHandler.setAcquireGenAK4Jets(true);
       genInfoHandler.setAcquireGenAK4Jets(false);
+      
       // Specify this flag to omit V->qq->jj
       genInfoHandler.setDoGenJetsVDecayCleaning(false);
       // Do not clean jets, allow user to do this on their own
       genInfoHandler.setDoGenJetsCleaning(false);
+      
       genInfoHandler.bookBranches(sample_tree);
     }
 
@@ -555,7 +608,7 @@ void produceReweightedGen(
   SampleHelpers::addToCondorTransferList(stroutput);
 }
 
-
+/*
 void makePlots(TString strSampleSet, TString period, TString strdate){
   SystematicsHelpers::SystematicVariationTypes const theGlobalSyst = SystematicsHelpers::sNominal;
 
@@ -616,7 +669,7 @@ void makePlots(TString strSampleSet, TString period, TString strdate){
       ||
       bname.BeginsWith("p_Gen")
       ||
-      bname.Contains("LHECandMass")
+      bname.Contains("GenHMass")
       ||
       bname.BeginsWith("KFactor")
       ){
@@ -638,7 +691,7 @@ void makePlots(TString strSampleSet, TString period, TString strdate){
     val_ME_SIG = ME_Kfactor_values.find("p_Gen_JJEW_SIG_ghv1_1_MCFM")->second;
   }
   float* val_ME_CPS = ME_Kfactor_values.find("p_Gen_CPStoBWPropRewgt")->second;
-  float* LHECandMass = ME_Kfactor_values.find("LHECandMass")->second;
+  float* GenHMass = ME_Kfactor_values.find("GenHMass")->second;
 
   bool hasError = false;
   if (!val_ME_SIG){
@@ -868,3 +921,4 @@ void makePlots(TString strSampleSet, TString period, TString strdate){
   delete tin;
   foutput->Close();
 }
+*/

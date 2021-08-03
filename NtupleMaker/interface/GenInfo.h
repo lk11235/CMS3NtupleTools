@@ -32,7 +32,7 @@ struct GenInfo{
   cms3_nShowerGluons_t n_shower_gluons_to_bottom;
   cms3_nShowerGluons_t n_shower_gluons_to_charm;
 
-  float genHEPMCweight_default;
+  float genHEPMCweight;
   float genHEPMCweight_NNPDF30;
 
   // The difference between the two below and the two above is that genHEPMCweight uses GenEventInfoHandle::weight() if possible,

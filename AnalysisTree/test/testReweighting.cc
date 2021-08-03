@@ -342,18 +342,18 @@ void getTrees(
   MELAout << "Reweighting bin boundaries: " << binning_rewgt.getBinningVector() << endl;
   BulkReweightingBuilder rewgtBuilder(
     binning_rewgt,
-    { "LHECandMass" },
-    { "genHEPMCweight_default" },
-    { "xsec" },
+    { "GenHMass" },
+    { "genHEPMCweight" },
+    { "genxsec" },
     ReweightingFunctions::getSimpleVariableBin,
     ReweightingFunctions::getSimpleWeight,
     ReweightingFunctions::getSimpleWeight
   );
   BulkReweightingBuilder rewgtBuilder_readTest(
     binning_rewgt,
-    { "LHECandMass" },
-    { "genHEPMCweight_default" },
-    { "xsec" },
+    { "GenHMass" },
+    { "genHEPMCweight" },
+    { "genxsec" },
     ReweightingFunctions::getSimpleVariableBin,
     ReweightingFunctions::getSimpleWeight,
     ReweightingFunctions::getSimpleWeight

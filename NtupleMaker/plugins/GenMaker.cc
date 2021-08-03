@@ -213,12 +213,12 @@ void GenMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
     lheHandler_NNPDF30_NLO->extract();
 
     if (genEvtInfoHandle.isValid()){
-      result->genHEPMCweight_default = genEvtInfoHandle->weight();
-      if (result->genHEPMCweight_default==1.) result->genHEPMCweight_default = lheHandler_default->getLHEOriginalWeight();
+      result->genHEPMCweight = genEvtInfoHandle->weight();
+      if (result->genHEPMCweight==1.) result->genHEPMCweight = lheHandler_default->getLHEOriginalWeight();
     }
-    else result->genHEPMCweight_default = lheHandler_default->getLHEOriginalWeight(); // Default was also 1, so if !genEvtInfoHandle.isValid(), the statement still passes
-    result->genHEPMCweight_NNPDF30 = result->genHEPMCweight_default; // lheHandler_NNPDF30_NLO->getLHEOriginalWeight() should give the same value
-    result->genHEPMCweight_default *= lheHandler_default->getWeightRescale();
+    else result->genHEPMCweight = lheHandler_default->getLHEOriginalWeight(); // Default was also 1, so if !genEvtInfoHandle.isValid(), the statement still passes
+    result->genHEPMCweight_NNPDF30 = result->genHEPMCweight; // lheHandler_NNPDF30_NLO->getLHEOriginalWeight() should give the same value
+    result->genHEPMCweight *= lheHandler_default->getWeightRescale();
     result->genHEPMCweight_NNPDF30 *= lheHandler_NNPDF30_NLO->getWeightRescale();
 
     result->LHEweight_scaledOriginalWeight_default = result->LHEweight_scaledOriginalWeight_NNPDF30 = lheHandler_default->getLHEOriginalWeight();
@@ -253,9 +253,9 @@ void GenMaker::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
     lheHandler_NNPDF30_NLO->clear();
   }
   else{
-    if (genEvtInfoHandle.isValid()) result->genHEPMCweight_default = genEvtInfoHandle->weight();
-    else result->genHEPMCweight_default = genps_weight;
-    result->genHEPMCweight_NNPDF30 = result->genHEPMCweight_default; // No other choice really
+    if (genEvtInfoHandle.isValid()) result->genHEPMCweight = genEvtInfoHandle->weight();
+    else result->genHEPMCweight = genps_weight;
+    result->genHEPMCweight_NNPDF30 = result->genHEPMCweight; // No other choice really
   }
 
   // Extract PS weights

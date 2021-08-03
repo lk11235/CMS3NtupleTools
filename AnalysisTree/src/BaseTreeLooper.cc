@@ -434,7 +434,7 @@ void BaseTreeLooper::loop(bool keepProducts){
         (maxNEvents>=0 && (int) ev_rec==maxNEvents)
         ) break;
 
-      MELAout << "Reached doAccumulate..." << endl;
+      //MELAout << "Reached doAccumulate..." << endl;
 
       bool doAccumulate = true;
       if (this->isData_currentTree){
@@ -453,12 +453,12 @@ void BaseTreeLooper::loop(bool keepProducts){
         &&
         (eventIndex_end<0 || (int) ev_traversed<eventIndex_end)
         );
-        MELAout << "Not data..." << endl;
+        //MELAout << "Not data..." << endl;
       }
       if (doAccumulate){
-        MELAout << "if (doAccumulate)..." << endl;
+        //MELAout << "if (doAccumulate)..." << endl;
         if (tree->getEvent(ev)){
-          MELAout << "if (tree->getEvent(ev))..." << endl;
+          //MELAout << "if (tree->getEvent(ev))..." << endl;
           SimpleEntry product;
           if (sampleIdOpt==kStoreByRunAndEventNumber){
 #define RUNLUMIEVENT_VARIABLE(TYPE, NAME, DEFVAL) product.setNamedVal<TYPE>(#NAME, *NAME);
@@ -467,20 +467,20 @@ void BaseTreeLooper::loop(bool keepProducts){
           }
           else if (sampleIdOpt==kStoreByMH) product.setNamedVal("SampleMHVal", MHval);
           if (tree->isValidEvent()){
-            MELAout << "if (tree->isValidEvent())..." << endl;
+            //MELAout << "if (tree->isValidEvent())..." << endl;
             if (this->looperFunction(this, it_globalWgt->second, product)){
-              MELAout << "Trying addProduct(product, &ev_rec)..." << endl;
+              //MELAout << "Trying addProduct(product, &ev_rec)..." << endl;
               if (keepProducts) this->addProduct(product, &ev_rec);
-              MELAout << "Products added..." << endl;
+              //MELAout << "Products added..." << endl;
             }
           }
         }
-        MELAout << "ev_acc++..." << endl;
+        //MELAout << "ev_acc++..." << endl;
         ev_acc++;
       }
-      MELAout << "Will try progress bar for ev loop over nevents..." << endl;
+      //MELAout << "Will try progress bar for ev loop over nevents..." << endl;
       HelperFunctions::progressbar(ev, nevents);
-      MELAout << "ev_traversed++..." << endl;
+      //MELAout << "ev_traversed++..." << endl;
       ev_traversed++;
     }
 

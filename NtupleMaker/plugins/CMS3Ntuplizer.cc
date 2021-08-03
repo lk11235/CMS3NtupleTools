@@ -406,7 +406,7 @@ bool CMS3Ntuplizer::recordGenInfo(edm::Event const& iEvent){
   SET_GENINFO_VARIABLE(n_shower_gluons_to_charm);
 
   // LHE variations
-  SET_GENINFO_VARIABLE(genHEPMCweight_default);
+  SET_GENINFO_VARIABLE(genHEPMCweight);
   SET_GENINFO_VARIABLE(genHEPMCweight_NNPDF30);
 
   SET_GENINFO_VARIABLE(LHEweight_scaledOriginalWeight_default);

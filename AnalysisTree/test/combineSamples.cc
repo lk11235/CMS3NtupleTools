@@ -34,7 +34,7 @@ void combineSamples(TString inpath, TString outpath){
   };
 
   TString strxsec = "xsec";
-  TString strWgtNominal = "genHEPMCweight_default";
+  TString strWgtNominal = "genHEPMCweight";
   TString strbinningvar = "LHECandMass";
   ExtendedBinning LHECandMassBinning(strbinningvar);
   for (unsigned int is=0; is<strsamples_POWHEG_ZZ.size()-1; is++){

@@ -59,7 +59,7 @@ void GenInfoObject::setSystematic(SystematicsHelpers::SystematicVariationTypes c
 
 float GenInfoObject::getGenWeight(bool useDefaultPDFSet) const{
   using namespace SystematicsHelpers;
-  float wgt = (useDefaultPDFSet ? extras.genHEPMCweight_default : extras.genHEPMCweight_NNPDF30);
+  float wgt = (useDefaultPDFSet ? extras.genHEPMCweight : extras.genHEPMCweight_NNPDF30);
   switch (currentSyst){
   case tPDFScaleDn:
     wgt *= extras.LHEweight_QCDscale_muR1_muF0p5;

@@ -16,7 +16,7 @@ GenInfo::GenInfo() :
   sumEt(-1),
   pThat(-1),
 
-  genHEPMCweight_default(1),
+  genHEPMCweight(1),
   genHEPMCweight_NNPDF30(1),
 
   LHEweight_QCDscale_muR1_muF1(1),

@@ -98,11 +98,14 @@ bool GenInfoHandler::constructCoreGenInfo(SystematicsHelpers::SystematicVariatio
     for (TString const& strme:tree_MElist_map[currentTree]){
       MElist[strme] = nullptr;
       allVariablesPresent &= this->getConsumed(strme, MElist.find(strme)->second);
+      //MELAout << "strme looks like:" << strme << endl;
       if (!(MElist.find(strme)->second)){
         if (this->verbosity>=TVar::ERROR) MELAerr << "GenInfoHandler::constructCoreGenInfo: ME handle for " << strme << " is null!" << endl;
         assert(0);
       }
+      //MELAout << "strme looks like:" << strme << endl;
     }
+    //MElist["GenHMass"] = nullptr;
   }
 
   if (!allVariablesPresent){
@@ -127,21 +130,21 @@ bool GenInfoHandler::constructCoreGenInfo(SystematicsHelpers::SystematicVariatio
     genWeightException == SampleHelpers::kLargeDefaultGenWeight
     &&
     (
-      (abs_genWeight_default_thr && *abs_genWeight_default_thr>0.f && std::abs(genInfo->extras.genHEPMCweight_default)>*abs_genWeight_default_thr)
+      (abs_genWeight_default_thr && *abs_genWeight_default_thr>0.f && std::abs(genInfo->extras.genHEPMCweight)>*abs_genWeight_default_thr)
       ||
-      (LHEweight_scaledOriginalWeight_default/* && *LHEweight_scaledOriginalWeight_default != 0.f*/ && *LHEweight_scaledOriginalWeight_default != *genHEPMCweight_default)
+      (LHEweight_scaledOriginalWeight_default/* && *LHEweight_scaledOriginalWeight_default != 0.f*/ && *LHEweight_scaledOriginalWeight_default != *genHEPMCweight)
       )
     ){
     if (this->verbosity>=TVar::INFO) MELAout
-      << "GenInfoHandler::constructCoreGenInfo: genHEPMCweight_default = " << genInfo->extras.genHEPMCweight_default
+      << "GenInfoHandler::constructCoreGenInfo: genHEPMCweight = " << genInfo->extras.genHEPMCweight
       << " (original genHEPMCweight_NNPDF30 = " << genInfo->extras.genHEPMCweight_NNPDF30 << ")"
       << " is invalid! A threshold of " << *abs_genWeight_default_thr << " may be applied." << endl;
     // Attempt to fix the weights
     if (LHEweight_scaledOriginalWeight_default){
-      *genHEPMCweight_default = genInfo->extras.genHEPMCweight_default = *LHEweight_scaledOriginalWeight_default;
+      *genHEPMCweight = genInfo->extras.genHEPMCweight = *LHEweight_scaledOriginalWeight_default;
       *genHEPMCweight_NNPDF30 = genInfo->extras.genHEPMCweight_NNPDF30 = *LHEweight_scaledOriginalWeight_NNPDF30;
     }
-    else{ *genHEPMCweight_default = *genHEPMCweight_NNPDF30 = genInfo->extras.genHEPMCweight_default = genInfo->extras.genHEPMCweight_NNPDF30 = 0.f; }
+    else{ *genHEPMCweight = *genHEPMCweight_NNPDF30 = genInfo->extras.genHEPMCweight = genInfo->extras.genHEPMCweight_NNPDF30 = 0.f; }
   }
 
   return true;
@@ -507,7 +510,7 @@ this->addConsumed<TYPE>(#NAME); this->defineConsumedSloppy(#NAME);
       this->defineConsumedSloppy(bname);
       kfactorlist.push_back(bname);
     }
-    if (acquireLHEMEWeights && (bname.Contains("p_Gen") || bname.Contains("LHECandMass"))){
+    if (acquireLHEMEWeights && (bname.Contains("p_Gen") || bname.Contains("GenHMass"))){
       tree->bookBranch<float>(bname, 0.f);
       this->addConsumed<float>(bname);
       this->defineConsumedSloppy(bname);
@@ -515,6 +518,7 @@ this->addConsumed<TYPE>(#NAME); this->defineConsumedSloppy(#NAME);
     }
     else if (acquireLHEParticles && bname.Contains(colName_lheparticles)) has_lheparticles = true;
   }
+  //melist.push_back("GenHMass");
   tree_kfactorlist_map[tree] = kfactorlist;
   tree_MElist_map[tree] = melist;
   tree_lheparticles_present_map[tree] = has_lheparticles;
@@ -567,16 +571,16 @@ bool GenInfoHandler::determineWeightThresholds(){
     return false;
   }
 
-  float* genHEPMCweight_default = nullptr;
+  float* genHEPMCweight = nullptr;
 
-  bool allVariablesPresent = this->getConsumed("genHEPMCweight_default", genHEPMCweight_default);
+  bool allVariablesPresent = this->getConsumed("genHEPMCweight", genHEPMCweight);
   if (!allVariablesPresent){
     if (this->verbosity>=TVar::ERROR) MELAerr << "GenInfoHandler::determineWeightThresholds: Not all variables are consumed properly!" << endl;
     assert(0);
   }
   if (this->verbosity>=TVar::DEBUG) MELAout << "GenInfoHandler::determineWeightThresholds: All variables are set up!" << endl;
 
-  std::vector<float*> tmpvec_wgts{ genHEPMCweight_default };
+  std::vector<float*> tmpvec_wgts{ genHEPMCweight };
   abs_genWeight_default_thr_map[currentTree] = ReweightingFunctions::getAbsWeightThresholdByNeff(currentTree, tmpvec_wgts, ReweightingFunctions::getSimpleWeight, 250000., this->verbosity);
   abs_genWeight_default_thr = &(abs_genWeight_default_thr_map[currentTree]);
 

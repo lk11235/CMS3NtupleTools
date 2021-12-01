@@ -59,3 +59,4 @@ mtarfile lib_CMS4_V10-02-03_1025.tar.xz --xz --xz_level 9 -x "JHUGenMELA/MELA/da
 * `cmsRun` options (`cmsRun -h`) must be put before the pset or else the VarParsing library intercepts it and crashes
 * Don't be alarmed if it takes a while to finish processing the first event (see notes in [here](test/profiling/warmup_cache.sh))
 * Locally, 4 threads (`cmsRun -n 4 main_pset.py ...`) gives best results, but be wary that this can sometimes cause crashes in the subJetMaker (deep tagger stuff)
+* 'root -b -l loadLib.C' then '.L produceReweightedGen.cc+'

@@ -36,15 +36,24 @@
 
 #define BRANCH_SCALAR_COMMANDS \
   BRANCH_COMMAND(float, event_wgt) \
-  BRANCH_COMMAND(float, event_wgt_adjustment_NNPDF30) /*\
+  BRANCH_COMMAND(float, event_wgt_adjustment_NNPDF30) \
   BRANCH_COMMAND(bool, invalidReweightingWgts) \
   BRANCH_COMMAND(float, sample_wgt) \
+  BRANCH_COMMAND(float, xsec) \
+  BRANCH_COMMAND(float, genxsec) \
+  BRANCH_COMMAND(float, genBR) \
+  BRANCH_COMMAND(float, DiJetMass) \
+  BRANCH_COMMAND(float, DiJetDEta) \
   BRANCH_COMMAND(float, lheHiggs_pt) \
   BRANCH_COMMAND(float, lheLeptonicDecay_pt) \
   BRANCH_COMMAND(float, lheLeptonicDecay_mass) \
   BRANCH_COMMAND(float, genLeptonicDecay_pt) \
-  BRANCH_COMMAND(float, genLeptonicDecay_mass) */
-#define BRANCH_VECTOR_COMMANDS /*\
+  BRANCH_COMMAND(float, genLeptonicDecay_mass)
+#define BRANCH_VECTOR_COMMANDS \
+  BRANCH_COMMAND(float, LepPt) \
+  BRANCH_COMMAND(float, LepEta) \
+  BRANCH_COMMAND(float, JetPt) \
+  BRANCH_COMMAND(float, JetEta) \
   BRANCH_COMMAND(cms3_id_t, lhemothers_id) \
   BRANCH_COMMAND(cms3_id_t, genparticles_id) \
   BRANCH_COMMAND(float, lhemothers_pz) \
@@ -55,7 +64,7 @@
   BRANCH_COMMAND(float, genak4jets_pt) \
   BRANCH_COMMAND(float, genak4jets_eta) \
   BRANCH_COMMAND(float, genak4jets_phi) \
-  BRANCH_COMMAND(float, genak4jets_mass) */
+  BRANCH_COMMAND(float, genak4jets_mass)
 #define BRANCH_COMMANDS \
   BRANCH_SCALAR_COMMANDS \
   BRANCH_VECTOR_COMMANDS 
@@ -134,7 +143,7 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   event_wgt_adjustment_NNPDF30 = (genwgt_default!=0. ? genwgt_NNPDF30 / genwgt_default : 0.);
   event_wgt *= genwgt_default;
   if (event_wgt==0.f) return false;
-/*
+/////////////////////////////////////////////////////////////////////////////////////////
   bool hasTaus = false;
   unsigned int n_leps_nus=0;
   ParticleObject::LorentzVector_t p4_lheHiggs;
@@ -172,7 +181,7 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   }
   genLeptonicDecay_pt = p4_genLeptonicDecay.Pt();
   genLeptonicDecay_mass = p4_genLeptonicDecay.M();
-
+////////////////////////////////////////////////////////////////////////////////////////
   auto const& genak4jets = genInfoHandler->getGenAK4Jets();
   for (auto const& jet:genak4jets){
     if (jet->pt()<20.f) continue;
@@ -185,7 +194,6 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   sample_wgt = rewgtBuilder->getOverallReweightingNormalization(currentTree);
   invalidReweightingWgts = !rewgtBuilder->checkWeightsBelowThreshold(currentTree);
 
-*/
 
   // Record LHE MEs and K factors
   for (auto const& it:genInfo->extras.LHE_ME_weights) commonEntry.setNamedVal(it.first, it.second);
@@ -256,14 +264,16 @@ void produceReweightedGen(
 
   // Get sample specifications
   std::vector<TString> sampledirs;
+  std::vector<TString> CJLSTsamp;
+
   SampleHelpers::constructSamplesList(strSampleSet, theGlobalSyst, sampledirs);
 
 
-  sampledirs = std::vector<TString>{"/GluGluHToZZTo4L_M200_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"};
+//  sampledirs = std::vector<TString>{"/GluGluHToZZTo4L_M200_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"};
 
-/*
+
   sampledirs = std::vector<TString>{
-              "/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM",
+              //"/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM",
               "/GluGluHToZZTo4L_M160_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
               "/GluGluHToZZTo4L_M170_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
               "/GluGluHToZZTo4L_M180_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
@@ -271,7 +281,7 @@ void produceReweightedGen(
               "/GluGluHToZZTo4L_M200_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
               "/GluGluHToZZTo4L_M210_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
               "/GluGluHToZZTo4L_M230_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
-              "/GluGluHToZZTo4L_M250_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
+              "/GluGluHToZZTo4L_M250_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"/*,
               "/GluGluHToZZTo4L_M270_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
               "/GluGluHToZZTo4L_M300_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
               "/GluGluHToZZTo4L_M350_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
@@ -287,9 +297,37 @@ void produceReweightedGen(
               "/GluGluHToZZTo4L_M1500_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
               "/GluGluHToZZTo4L_M2000_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
               "/GluGluHToZZTo4L_M2500_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM",
-              "/GluGluHToZZTo4L_M3000_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"
+              "/GluGluHToZZTo4L_M3000_13TeV_powheg2_JHUGenV7011_pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM"*/
             };
-*/
+
+  CJLSTsamp = std::vector<TString>{
+              //"/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH125/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH160/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH170/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH180/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH190/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH200/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH210/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH230/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH250/ZZ4lAnalysis.root"/*,
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH270/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH300/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH350/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH400/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH450/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH500/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH550/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH600/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH700/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH800/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH900/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH1000/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH1500/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH2000/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH2500/ZZ4lAnalysis.root",
+              "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH3000/ZZ4lAnalysis.root"*/
+            };
+
 
   MELAout << "strSampleSet = " << strSampleSet << endl;
 
@@ -380,7 +418,7 @@ void produceReweightedGen(
     binning_rewgt,
     { "GenHMass" },
     { "genHEPMCweight" },
-    { "genxsec" },
+    { "xsec" },
     ReweightingFunctions::getSimpleVariableBin,
     ReweightingFunctions::getSimpleWeight,
     ReweightingFunctions::getSimpleWeight
@@ -433,12 +471,23 @@ void produceReweightedGen(
   
   MELAout << "test2" << endl;
 
+  MELAout << "sampledirs =" << sampledirs << endl;
+
+  long sampcount = 0;
+
   for (auto const& sname:sampledirs){
-    TString strinput = "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH200/ZZ4lAnalysis.root";
+    MELAout << "sname =" << sname << endl;
+   
+    MELAout << "sample =" << CJLSTsamp.at(sampcount) << endl;
+
+    TString strinput = CJLSTsamp.at(sampcount);
+    sampcount += 1;
+    //TString strinput = "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH200/ZZ4lAnalysis.root";
     //TString strinput = SampleHelpers::getDatasetFileName(sname);
     MELAout << "Acquiring " << sname << " from input file(s) " << strinput << "..." << endl;
     MELAout << "testing" << endl;
     BaseTree* sample_tree = new BaseTree(strinput, "ZZTree/candTree", "ZZTree/candTree_failed", ""); 
+    //BaseTree* sample_tree = new BaseTree(strinput, "ZZTree/candTree", "", ""); 
     MELAout << "test" << endl;
     sample_trees.push_back(sample_tree);
     MELAout << "tested" << endl;
@@ -457,11 +506,23 @@ void produceReweightedGen(
 
     std::vector<TString> allbranchnames; sample_tree->getValidBranchNamesWithoutAlias(allbranchnames, false);
 
-    const int nEntries = sample_tree->getSelectedNEvents();
+    //const int nEntries = sample_tree->getSelectedNEvents();
+    const int nEntries = sample_tree->getNEvents();
     bool hasTaus = false;
     double sum_wgts_raw_noveto = 0;
     double sum_wgts_raw_withveto = 0;
     double sum_wgts_raw_withveto_defaultMemberZero = 0;
+    float genxsec = 1;
+    float genBR = 1;
+    float DiJetMass = 0;
+    float DiJetDEta = 0;
+
+    std::vector<float>** LepPt = nullptr;
+    std::vector<float>** LepEta = nullptr;
+    std::vector<float>** JetPt = nullptr;
+    std::vector<float>** JetEta = nullptr;
+
+    
     float xsec = 1;
     float xsec_scale = 1;
     float BR_scale = 1;
@@ -469,13 +530,50 @@ void produceReweightedGen(
       // Get cross section
       sample_tree->bookBranch<float>("xsec", 0.f);
       sample_tree->getSelectedEvent(0);
-      sample_tree->getVal("genxsec", xsec);
+      sample_tree->getVal("xsec", xsec);
       xsec *= 1000.;
+
+      sample_tree->bookBranch<float>("genxsec", 0.f);
+      sample_tree->getSelectedEvent(0);
+      sample_tree->getVal("genxsec", genxsec);
+
+      sample_tree->bookBranch<float>("genBR", 0.f);
+      sample_tree->getSelectedEvent(0);
+      sample_tree->getVal("genBR", genBR);
+
+      xsec = genxsec*genBR*1000;
+
+      sample_tree->bookBranch<float>("DiJetMass", 0.f);
+      sample_tree->getSelectedEvent(0);
+      sample_tree->getVal("DiJetMass", DiJetMass);
+
+      sample_tree->bookBranch<float>("DiJetDEta", 0.f);
+      sample_tree->getSelectedEvent(0);
+      sample_tree->getVal("DiJetDEta", DiJetDEta);
+/*
+      if (HelperFunctions::checkListVariable<TString>(allbranchnames, "LepPt")) sample_tree->bookBranch<std::vector<float>*>("LepPt", nullptr);
+      //sample_tree->bookBranch<std::vector<float>*>("LepPt", nullptr);
+      sample_tree->getSelectedEvent(0);
+      sample_tree->getValRef("LepPt", LepPt);
+*/   
+/*
+      sample_tree->bookBranch<std::vector<float>*>("LepEta", nullptr);
+      sample_tree->getSelectedEvent(0);
+      sample_tree->getVal("LepEta", LepEta);
+
+      sample_tree->bookBranch<std::vector<float>*>("JetPt", nullptr);
+      sample_tree->getSelectedEvent(0);
+      sample_tree->getVal("JetPt", JetPt);
+
+      sample_tree->bookBranch<std::vector<float>*>("JetEta", nullptr);
+      sample_tree->getSelectedEvent(0);
+      sample_tree->getVal("JetEta", JetEta);
+*/
 
       // Book branches
       genInfoHandler.setAcquireLHEMEWeights(false);
       genInfoHandler.setAcquireLHEParticles(true);
-      genInfoHandler.setAcquireGenParticles(false);
+      genInfoHandler.setAcquireGenParticles(true);
       genInfoHandler.bookBranches(sample_tree);
 
       sample_tree->silenceUnused();
@@ -522,7 +620,7 @@ void produceReweightedGen(
         if (nEntries>0) frac_zero_genwgts = double(n_zero_genwgts)/double(nEntries);
         sum_wgts_raw_noveto = sum_wgts_raw_withveto / (1. - frac_zero_genwgts);
       }
-      MELAout << "sum_wgts_raw_withveto =" << sum_wgts_raw_withveto << endl;
+      MELAout << " ############################# sum_wgts_raw_withveto =" << sum_wgts_raw_withveto << endl;
       MELAout << "sum_wgts_raw_withveto_defaultMemberZero =" << sum_wgts_raw_withveto_defaultMemberZero << endl;
       MELAout << "sum_wgts_raw_noveto =" << sum_wgts_raw_noveto << endl;
 
@@ -531,11 +629,17 @@ void produceReweightedGen(
       MELAout << "BR_scale =" << BR_scale << endl;
     }
     std::unordered_map<SystematicsHelpers::SystematicVariationTypes, double> globalWeights;
-    double globalWeight = xsec * xsec_scale * BR_scale / sum_wgts_raw_withveto; globalWeights[theGlobalSyst] = globalWeight;
+    //double globalWeight = xsec * xsec_scale * BR_scale / sum_wgts_raw_withveto; globalWeights[theGlobalSyst] = globalWeight;
+    double globalWeight = xsec * xsec_scale / sum_wgts_raw_withveto; globalWeights[theGlobalSyst] = globalWeight;
+    //double globalWeight = xsec; globalWeights[theGlobalSyst] = globalWeight;
+    //double globalWeight = xsec * xsec_scale; globalWeights[theGlobalSyst] = globalWeight;
+
     MELAout << "Sample " << sample_tree->sampleIdentifier << " has a gen. weight sum of " << sum_wgts_raw_withveto << "." << endl;
     MELAout << "\t- Raw xsec = " << xsec << endl;
+    MELAout << "\t- xsec scale = " << xsec_scale << endl;
+    MELAout << "\t- xsec * xsec_scale = " << xsec_scale * xsec << endl;
     MELAout << "\t- xsec scale * BR scale = " << xsec_scale * BR_scale << endl;
-    MELAout << "\t- xsec * BR = " << xsec * xsec_scale * BR_scale << endl;
+    MELAout << "\t- xsec * BR = " << xsec * genBR << endl;
     MELAout << "\t- Global weight = " << globalWeight << endl;
 
     // Reset gen. and LHE particle settings, and book those branches as well
@@ -557,7 +661,9 @@ void produceReweightedGen(
 
     // Register tree
     MELAout << "\t- Registering the sample for reweighting..." << endl;
-    rewgtBuilder.registerTree(sample_tree, xsec_scale * BR_scale / sum_wgts_raw_withveto);
+    //rewgtBuilder.registerTree(sample_tree, xsec_scale * BR_scale / sum_wgts_raw_withveto);
+    rewgtBuilder.registerTree(sample_tree, xsec_scale / sum_wgts_raw_withveto);
+    //rewgtBuilder.registerTree(sample_tree, xsec_scale);
 
     sample_tree->silenceUnused();
 
@@ -608,7 +714,7 @@ void produceReweightedGen(
   SampleHelpers::addToCondorTransferList(stroutput);
 }
 
-/*
+
 void makePlots(TString strSampleSet, TString period, TString strdate){
   SystematicsHelpers::SystematicVariationTypes const theGlobalSyst = SystematicsHelpers::sNominal;
 
@@ -921,4 +1027,4 @@ void makePlots(TString strSampleSet, TString period, TString strdate){
   delete tin;
   foutput->Close();
 }
-*/
+

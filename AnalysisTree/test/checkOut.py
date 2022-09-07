@@ -1,5 +1,7 @@
 import os
 import glob
+import sys
+sys.argv.append( '-b-' )
 import ROOT
 from math import sqrt
 import time
@@ -17,7 +19,7 @@ from array import *
 # filename = "/afs/cern.ch/work/l/lkang/CMS3/CMSSW_10_2_22_/src/CMS3/AnalysisTree/test/output/ReweightedGenTrees/3/2017/GGHToZZTo4L_Nominal.root"
 filename = "/eos/user/l/lkang/Active_Research/POWHEG/GGHToZZTo4L_Nominal.root"
 filename = "/eos/user/l/lkang/Active_Research/POWHEG/test.root"
-filename = "/afs/cern.ch/work/l/lkang/CMS3/CMSSW_10_2_22_/src/CMS3/AnalysisTree/test/output/ReweightedGenTrees/10/2017/GGHToZZTo4L_Nominal.root"
+filename = "/afs/cern.ch/work/l/lkang/CMS3/CMSSW_10_2_22_/src/CMS3/AnalysisTree/test/output/ReweightedGenTrees/14/2017/GGHToZZTo4L_Nominal.root"
 
 filenameorig = "/eos/cms/store/group/phys_higgs/cmshzz4l/cjlst/RunIILegacy/200205_CutBased/MC_2017/HighMass/ggH200/ZZ4lAnalysis.root"
 
@@ -154,6 +156,7 @@ hpt.SetLineColor(4)
 #hpo.Scale(1/hpo.Integral())
 #hpt.Scale(1/hpt.Integral())
 
+c1.SetLogy()
 
 # hp.Draw("hist same")
 # hpo.Draw("hist")
@@ -168,7 +171,7 @@ hpt.Draw("hist same")
 # hf2.Draw("hist same")
 # hf3.Draw("hist same")
 
-c1.SaveAs("/eos/user/l/lkang/Active_Research/POWHEG/TestOut.pdf")
+c1.SaveAs("/eos/user/l/lkang/Active_Research/POWHEG/TestOut1.pdf")
 # c1.Draw()
 
 quit()

@@ -49,7 +49,8 @@
   BRANCH_COMMAND(float, lheLeptonicDecay_mass) \
   BRANCH_COMMAND(float, genLeptonicDecay_pt) \
   BRANCH_COMMAND(float, genLeptonicDecay_mass)
-#define BRANCH_VECTOR_COMMANDS \
+
+#define BRANCH_VECTOR_COMMANDS /*\
   BRANCH_COMMAND(float, LepPt) \
   BRANCH_COMMAND(float, LepEta) \
   BRANCH_COMMAND(float, JetPt) \
@@ -65,6 +66,7 @@
   BRANCH_COMMAND(float, genak4jets_eta) \
   BRANCH_COMMAND(float, genak4jets_phi) \
   BRANCH_COMMAND(float, genak4jets_mass)
+*/
 #define BRANCH_COMMANDS \
   BRANCH_SCALAR_COMMANDS \
   BRANCH_VECTOR_COMMANDS 
@@ -144,6 +146,7 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   event_wgt *= genwgt_default;
   if (event_wgt==0.f) return false;
 /////////////////////////////////////////////////////////////////////////////////////////
+/*
   bool hasTaus = false;
   unsigned int n_leps_nus=0;
   ParticleObject::LorentzVector_t p4_lheHiggs;
@@ -170,7 +173,7 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   ParticleObject::LorentzVector_t p4_genLeptonicDecay;
   auto const& genparticles = genInfoHandler->getGenParticles();
   for (auto const& part:genparticles){
-    if (part->extras.isPromptFinalState && (PDGHelpers::isAPhoton(part->pdgId()) || PDGHelpers::isANeutrino(part->pdgId()) || PDGHelpers::isALepton(part->pdgId()))){
+    rf (part->extras.isPromptFinalState && (PDGHelpers::isAPhoton(part->pdgId()) || PDGHelpers::isANeutrino(part->pdgId()) || PDGHelpers::isALepton(part->pdgId()))){
       p4_genLeptonicDecay += part->p4();
       genparticles_id.push_back(part->pdgId());
       genparticles_pt.push_back(part->pt());
@@ -181,6 +184,7 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
   }
   genLeptonicDecay_pt = p4_genLeptonicDecay.Pt();
   genLeptonicDecay_mass = p4_genLeptonicDecay.M();
+
 ////////////////////////////////////////////////////////////////////////////////////////
   auto const& genak4jets = genInfoHandler->getGenAK4Jets();
   for (auto const& jet:genak4jets){
@@ -190,10 +194,13 @@ bool LooperFunctionHelpers::looperRule(BaseTreeLooper* theLooper, std::unordered
     genak4jets_phi.push_back(jet->phi());
     genak4jets_mass.push_back(jet->mass());
   }
-
+*/
   sample_wgt = rewgtBuilder->getOverallReweightingNormalization(currentTree);
   invalidReweightingWgts = !rewgtBuilder->checkWeightsBelowThreshold(currentTree);
 
+  curernttree -> get val xsec getvalkwhatever
+
+  currentTree->getValRef("LepPt", LepPt); 
 
   // Record LHE MEs and K factors
   for (auto const& it:genInfo->extras.LHE_ME_weights) commonEntry.setNamedVal(it.first, it.second);
@@ -418,7 +425,7 @@ void produceReweightedGen(
     binning_rewgt,
     { "GenHMass" },
     { "genHEPMCweight" },
-    { "xsec" },
+    { "genxsec", "genBR" },
     ReweightingFunctions::getSimpleVariableBin,
     ReweightingFunctions::getSimpleWeight,
     ReweightingFunctions::getSimpleWeight
@@ -530,8 +537,8 @@ void produceReweightedGen(
       // Get cross section
       sample_tree->bookBranch<float>("xsec", 0.f);
       sample_tree->getSelectedEvent(0);
-      sample_tree->getVal("xsec", xsec);
-      xsec *= 1000.;
+      //sample_tree->getVal("xsec", xsec);
+      //xsec *= 1000.;
 
       sample_tree->bookBranch<float>("genxsec", 0.f);
       sample_tree->getSelectedEvent(0);
@@ -542,7 +549,7 @@ void produceReweightedGen(
       sample_tree->getVal("genBR", genBR);
 
       xsec = genxsec*genBR*1000;
-
+/*
       sample_tree->bookBranch<float>("DiJetMass", 0.f);
       sample_tree->getSelectedEvent(0);
       sample_tree->getVal("DiJetMass", DiJetMass);
@@ -550,12 +557,13 @@ void produceReweightedGen(
       sample_tree->bookBranch<float>("DiJetDEta", 0.f);
       sample_tree->getSelectedEvent(0);
       sample_tree->getVal("DiJetDEta", DiJetDEta);
-/*
+*/
+
       if (HelperFunctions::checkListVariable<TString>(allbranchnames, "LepPt")) sample_tree->bookBranch<std::vector<float>*>("LepPt", nullptr);
       //sample_tree->bookBranch<std::vector<float>*>("LepPt", nullptr);
       sample_tree->getSelectedEvent(0);
       sample_tree->getValRef("LepPt", LepPt);
-*/   
+ 
 /*
       sample_tree->bookBranch<std::vector<float>*>("LepEta", nullptr);
       sample_tree->getSelectedEvent(0);
@@ -573,7 +581,7 @@ void produceReweightedGen(
       // Book branches
       genInfoHandler.setAcquireLHEMEWeights(false);
       genInfoHandler.setAcquireLHEParticles(true);
-      genInfoHandler.setAcquireGenParticles(true);
+      genInfoHandler.setAcquireGenParticles(false);
       genInfoHandler.bookBranches(sample_tree);
 
       sample_tree->silenceUnused();
@@ -714,7 +722,7 @@ void produceReweightedGen(
   SampleHelpers::addToCondorTransferList(stroutput);
 }
 
-
+/*
 void makePlots(TString strSampleSet, TString period, TString strdate){
   SystematicsHelpers::SystematicVariationTypes const theGlobalSyst = SystematicsHelpers::sNominal;
 
@@ -1027,4 +1035,4 @@ void makePlots(TString strSampleSet, TString period, TString strdate){
   delete tin;
   foutput->Close();
 }
-
+*/
